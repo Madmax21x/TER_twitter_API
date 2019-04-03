@@ -5,10 +5,12 @@ from tweepy import Cursor
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
+from textblob import TextBlob
 
 import os
 import numpy as np
 import pandas as pd
+import re
 import matplotlib.pyplot as plt
 # os.chdir(os.getcwd() + "/../../../Documents")  # version WINDOWS
 os.chdir(os.getcwd() + "/Documents")  # version MAC
@@ -117,6 +119,19 @@ class TweetAnalyser():
     Functionality for analysing and categorizing content from tweets.
     """
 
+    def clean_tweet(self, tweet):
+        return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
+
+    def analyze_sentiment(self, tweet):
+        analysis = TextBlob(self.clean_tweet(tweet))
+
+        if analysis.sentiment.polarity > 0:
+            return 1
+        elif analysis.sentiment.polarity == 0:
+            return 0
+        else:
+            return -1
+
     def tweets_to_data_frame(self, tweets):
         df = pd.DataFrame(data=[tweet.text for tweet in tweets], columns=['tweets'])
 
@@ -136,7 +151,8 @@ if __name__ == "__main__":
     # fetched_tweets_filename = "tweets.txt"
 
     # twitter_client = TwitterClient('Carlito_delaf')  # précise nom du compte
-    # print(twitter_client.get_user_timeline_tweets(1))  # permet de recup 1er tweet de ma timeline
+    # print(twitter_client.get_user_timeline_tweets(1))  # permet de recup 1er
+    # tweet de ma timeline
     # twitter_streamer = TwitterStreamer()
     # twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
@@ -144,24 +160,33 @@ if __name__ == "__main__":
     tweet_analyser = TweetAnalyser()
     api = twitter_client.get_twiiter_client_api()
 
-    tweets = api.user_timeline(screen_name="EmmanuelMacron", count=20)
+    tweets = api.user_timeline(screen_name="elonmusk", count=20)
 
     df = tweet_analyser.tweets_to_data_frame(tweets)
-    # print(df.head(20))
+    df['sentiment'] = np.array([tweet_analyser.analyze_sentiment(tweet) for tweet in df['tweets']])
+
+    print(df.head(10))
 
     # print(dir(tweets[0]))
     # print(tweets[0].retweet_count)
 
     # Get average length over all tweets.
-    print(np.mean(df['len']))
+    # print(np.mean(df['len']))
 
     # Get the number of likes for the most liked tweet.
-    print(np.max(df['likes']))
+    # print(np.max(df['likes']))
 
     # Get the number of retweets for the most retweeted tweet.
-    print(np.max(df['retweets']))
+    # print(np.max(df['retweets']))
 
     # Time Series
-    time_likes = pd.Series(data=df['likes'].values, index=df['data'])
-    time_likes.plot(figsize=(16, 4), color='r')
-    plt.show()
+    # time_likes = pd.Series(data=df['likes'].values, index=df['date'])
+    # time_likes.plot(figsize=(16, 4), color='r')
+
+    # Time Retweets
+    # time_retweets = pd.Series(data=df['retweets'].values, index=df['date'])
+    # time_retweets.plot(figsize=(16, 4), color='r')
+
+    # time_likes.plot(figsize=(16, 4), label="like", legend=True)
+    # time_retweets.plot(figsize=(16, 4), label="retweets", legend=True)
+    # plt.show()
