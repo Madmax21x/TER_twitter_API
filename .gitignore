@@ -1,2 +1,5 @@
 
 .DS_Store
+*.pyc
+.DS_Store
+ter_credentials.py
