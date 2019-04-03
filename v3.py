@@ -7,24 +7,11 @@ from tweepy import OAuthHandler
 from tweepy import Stream
 from textblob import TextBlob
 
-import os
+import ter_credentials as ter_c
 import numpy as np
 import pandas as pd
 import re
 import matplotlib.pyplot as plt
-# os.chdir(os.getcwd() + "/../../../Documents")  # version WINDOWS
-os.chdir(os.getcwd() + "/Documents")  # version MAC
-
-cwd = os.getcwd()
-fichier = open("key_ter.txt", "r")
-text = fichier.read().strip()
-fichier.close()
-tempL = text.split(';')
-
-consumer_key = tempL[0]
-consumer_secret = tempL[1]
-access_token = tempL[2]
-access_token_secret = tempL[3]
 
 
 # ========================= Twitter Client ================================= #
@@ -61,8 +48,8 @@ class TwitterClient():
 class TwitterAuthenticator():
 
     def authenticate_twitter_app(self):
-        auth = OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_token_secret)
+        auth = OAuthHandler(ter_c.CONSUMER_KEY, ter_c.CONSUMER_SECRET)
+        auth.set_access_token(ter_c.ACCESS_TOKEN, ter_c.ACCESS_TOKEN_SECRET)
         return auth
 
 
@@ -160,12 +147,14 @@ if __name__ == "__main__":
     tweet_analyser = TweetAnalyser()
     api = twitter_client.get_twiiter_client_api()
 
-    tweets = api.user_timeline(screen_name="elonmusk", count=20)
+    tweets = api.user_timeline(screen_name="futuroscope", count=200)
 
     df = tweet_analyser.tweets_to_data_frame(tweets)
-    df['sentiment'] = np.array([tweet_analyser.analyze_sentiment(tweet) for tweet in df['tweets']])
 
-    print(df.head(10))
+    # # Sentiment Analysis
+    # df['sentiment'] = np.array([tweet_analyser.analyze_sentiment(tweet) for tweet in df['tweets']])
+
+    # print(df.head(10))
 
     # print(dir(tweets[0]))
     # print(tweets[0].retweet_count)
@@ -180,13 +169,13 @@ if __name__ == "__main__":
     # print(np.max(df['retweets']))
 
     # Time Series
-    # time_likes = pd.Series(data=df['likes'].values, index=df['date'])
-    # time_likes.plot(figsize=(16, 4), color='r')
+    time_likes = pd.Series(data=df['likes'].values, index=df['date'])
+    time_likes.plot(figsize=(16, 4), color='r')
 
     # Time Retweets
-    # time_retweets = pd.Series(data=df['retweets'].values, index=df['date'])
-    # time_retweets.plot(figsize=(16, 4), color='r')
+    time_retweets = pd.Series(data=df['retweets'].values, index=df['date'])
+    time_retweets.plot(figsize=(16, 4), color='r')
 
-    # time_likes.plot(figsize=(16, 4), label="like", legend=True)
-    # time_retweets.plot(figsize=(16, 4), label="retweets", legend=True)
-    # plt.show()
+    time_likes.plot(figsize=(16, 4), label="like", legend=True)
+    time_retweets.plot(figsize=(16, 4), label="retweets", legend=True)
+    plt.show()
