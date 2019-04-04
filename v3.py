@@ -88,6 +88,7 @@ class TwitterListener(StreamListener):
             print(data)
             with open(self.fetched_tweets_filename, 'a') as tf:
                 tf.write(data)
+                tf.close()
             return True
         except BaseException as e:
             print(" Error on_data: %s" % str(e))
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     # hash_tag_list = ["Donald Trump", "Macron", "France"]
     # fetched_tweets_filename = "tweets.txt"
 
-    # twitter_client = TwitterClient('Carlito_delaf')  # précise nom du compte
+    # twitter_client = TwitterClient('EmmanuelMacron')  # précise nom du compte
     # print(twitter_client.get_user_timeline_tweets(1))  # permet de recup 1er
     # tweet de ma timeline
     # twitter_streamer = TwitterStreamer()
@@ -147,13 +148,14 @@ if __name__ == "__main__":
     tweet_analyser = TweetAnalyser()
     api = twitter_client.get_twiiter_client_api()
 
-    tweets = api.user_timeline(screen_name="futuroscope", count=200)
+    tweets = api.user_timeline(screen_name="Maxence_21_", count=200)
+    # tweets = api.followers(screen_name="Maxence_21_")
 
+    # username you can use : realDonaldTrump ; EmmanuelMacron ;
     df = tweet_analyser.tweets_to_data_frame(tweets)
 
     # # Sentiment Analysis
     # df['sentiment'] = np.array([tweet_analyser.analyze_sentiment(tweet) for tweet in df['tweets']])
-
     # print(df.head(10))
 
     # print(dir(tweets[0]))
