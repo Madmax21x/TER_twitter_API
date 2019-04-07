@@ -173,13 +173,13 @@ if __name__ == "__main__":
     twitter_client = TwitterClient('EmmanuelMacron')  # précise nom du compte
 
     # Pour récupérer le 1er tweet de ma timeline ou celle d'un autre compte : #
-    # print(twitter_client.get_user_timeline_tweets(1))
+    print(twitter_client.get_user_timeline_tweets(1))
 
     # Pour récupérer le 1er ami ma liste d'amis ou celle d'un autre compte : #
     # print(twitter_client.get_friend_list(1))
 
     # Pour récupérer le 1er tweet de la timeline QUE de mon compte : #
-    print(twitter_client.get_home_timeline_tweets(1))
+    # print(twitter_client.get_home_timeline_tweets(1))
 
     """
     on stock dans tweets les x (ici x =200) derniers tweets d'un compte twitter
