@@ -22,7 +22,7 @@ class TwitterClient():
         self.twitter_client = API(self.auth)
         self.twitter_user = twitter_user
 
-    def get_twiiter_client_api(self):
+    def get_twitter_client_api(self):
         return self.twitter_client
 
     def get_user_timeline_tweets(self, num_tweets):
@@ -143,24 +143,43 @@ class TweetAnalyser():
 # ================================ Main ===================================== #
 if __name__ == "__main__":
     """
-    La première partie permet de récuper dans un fichier certains tweets
+    La première partie : permet de récuper dans un fichier certains tweets
     avec certains mots clées : ici la "hash_tag_list"
+
+    Pour l'instant tout n'est pas au point car il y aura des tweets en continu
+    ( un peu comme une boucle infinie ) si on utilise stream_tweets()
+
+    La seconde partie :
     On peut préciser le nom du compte twitter qu'on veut analyser : par défault
     ce sera mon compte.
 
-    Pour l'instant tout n'est pas au point car pour un compte ou il y a des
-    tweets en continu ex : donaldtrump ; le débit de tweets ne s'arrête jamais.
-    """
+    On a pour le moment mis à disposition 3 méthodes :
+    - get_user_timeline_tweets(Pour récupérer les tweets d'un compte en direct)
+    - get_friend_list(Pour récupérer la liste d'amis d'un compte en direct)
+    - get_home_timeline_tweets(Pour récupérer le 1er tweet de la timeline QUE
+    de mon compte)
 
+    """
+    # 1ère partie #
     hash_tag_list = ["Donald Trump", "Macron", "France"]
     fetched_tweets_filename = "tweets.txt"
 
-    twitter_client = TwitterClient('EmmanuelMacron')  # précise nom du compte
-    twitter_streamer = TwitterStreamer()
+    # twitter_streamer = TwitterStreamer()
+
+    # ATTENTION : boucle infinie : #
     # twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
-    # Pour récupérer juste le 1er tweet de ma timeline ou celle d'un compte : #
+    # 2ème Partie #
+    twitter_client = TwitterClient('EmmanuelMacron')  # précise nom du compte
+
+    # Pour récupérer le 1er tweet de ma timeline ou celle d'un autre compte : #
     # print(twitter_client.get_user_timeline_tweets(1))
+
+    # Pour récupérer le 1er ami ma liste d'amis ou celle d'un autre compte : #
+    # print(twitter_client.get_friend_list(1))
+
+    # Pour récupérer le 1er tweet de la timeline QUE de mon compte : #
+    print(twitter_client.get_home_timeline_tweets(1))
 
     """
     on stock dans tweets les x (ici x =200) derniers tweets d'un compte twitter
@@ -177,7 +196,7 @@ if __name__ == "__main__":
     """
     # twitter_client = TwitterClient()
     # tweet_analyser = TweetAnalyser()
-    # api = twitter_client.get_twiiter_client_api()
+    # api = twitter_client.get_twitter_client_api()
 
     # tweets = api.user_timeline(screen_name="univbordeaux", count=200)
     # tweets = api.followers(screen_name="Maxence_21_")
