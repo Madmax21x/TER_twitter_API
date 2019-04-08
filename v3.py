@@ -39,13 +39,19 @@ class TwitterClient():
             friend_list.append(friend)
         return friend_list
 
+    def get_follower_list(self, num_follower):
+        follower_list = []
+        for follower in Cursor(self.twitter_client.followers,
+        id=self.twitter_user).items(num_follower):
+            follower_list.append(follower)
+        return follower_list
+
     def get_home_timeline_tweets(self, num_tweets):
         home_timeline_tweets = []
         for tweet in Cursor(self.twitter_client.home_timeline,
         id=self.twitter_user).items(num_tweets):
             home_timeline_tweets.append(tweet)
         return home_timeline_tweets
-
 
 # ========================= Twitter Authenticater ========================= #
 class TwitterAuthenticator():
@@ -139,12 +145,30 @@ class TweetAnalyser():
 
         return df
 
+# ========================= Twitter InfoFollower ================================= #
+
+class FollowerAnalyzer():
+    """
+    Functionality for analysing and categorizing information about followers.
+    """
+
+    def followers_to_data_frame(self, followers):
+
+        df = pda.DataFrame(data=[follower.screen_name for follower in followers],
+        columns=['screen_name'])
+        df['location'] = numpy.array([follower.location for follower in followers])
+        df['protected'] = numpy.array([follower.protected for follower in followers])
+        df['verified'] = numpy.array([follower.verified for follower in followers])
+        df['num_follower'] = numpy.array([follower.followers_count for follower in followers])
+        df['num_friends'] = numpy.array([follower.friends_count for follower in followers])
+        df['num_tweet'] = numpy.array([follower.statuses_count for follower in followers])
+        return df
 
 # ================================ Main ===================================== #
 if __name__ == "__main__":
     """
     La première partie : permet de récuper dans un fichier certains tweets
-    avec certains mots clées : ici la "hash_tag_list"
+    avec certains mots clés : ici la "hash_tag_list"
 
     Pour l'instant tout n'est pas au point car il y aura des tweets en continu
     ( un peu comme une boucle infinie ) si on utilise stream_tweets()
@@ -173,7 +197,11 @@ if __name__ == "__main__":
     twitter_client = TwitterClient('EmmanuelMacron')  # précise nom du compte
 
     # Pour récupérer le 1er tweet de ma timeline ou celle d'un autre compte : #
-    print(twitter_client.get_user_timeline_tweets(1))
+    #print(twitter_client.get_user_timeline_tweets(1))
+
+    # Pour récupérer le 1er follower ma liste de followers ou celle d'un autre
+    # compte : #
+    # print(twitter_client.get_follower_list(1))
 
     # Pour récupérer le 1er ami ma liste d'amis ou celle d'un autre compte : #
     # print(twitter_client.get_friend_list(1))
@@ -206,6 +234,17 @@ if __name__ == "__main__":
     # print(df.head(10))
     # print(dir(tweets[0])) # pour obtenir les key words dont on a besoin
     # print(tweets[0].retweet_count)
+
+    """
+    -> On stock aussi dans un tableau les informations qu'on peut avoir sur les
+    followers d'un utilisateur (localisation, nombre de followers, amis..)
+    On affiche le tableau avec print(df)
+    """
+    # follower_analyser = FollowerAnalyzer()
+    # followers = twitter_client.get_follower_list(10)
+    # df = follower_analyser.followers_to_data_frame(followers)
+    # print(df)
+
 
     """
     # Sentiment Analysis # (Ne marche qu'en anglais mais possible en fr)
