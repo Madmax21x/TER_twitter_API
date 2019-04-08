@@ -8,7 +8,7 @@ from tweepy import Stream
 from textblob import TextBlob
 
 import ter_credentials as ter_c
-import numpy
+import numpy as npy
 import pandas as pda
 import re
 import matplotlib.pyplot as plt
@@ -136,16 +136,16 @@ class TweetAnalyser():
         df = pda.DataFrame(data=[tweet.text for tweet in tweets],
         columns=['tweets'])
 
-        df['id'] = numpy.array([tweet.id for tweet in tweets])
-        df['len'] = numpy.array([len(tweet.text) for tweet in tweets])
-        df['date'] = numpy.array([tweet.created_at for tweet in tweets])
-        df['source'] = numpy.array([tweet.source for tweet in tweets])
-        df['likes'] = numpy.array([tweet.favorite_count for tweet in tweets])
-        df['retweets'] = numpy.array([tweet.retweet_count for tweet in tweets])
+        df['id'] = npy.array([tweet.id for tweet in tweets])
+        df['len'] = npy.array([len(tweet.text) for tweet in tweets])
+        df['date'] = npy.array([tweet.created_at for tweet in tweets])
+        df['source'] = npy.array([tweet.source for tweet in tweets])
+        df['likes'] = npy.array([tweet.favorite_count for tweet in tweets])
+        df['retweets'] = npy.array([tweet.retweet_count for tweet in tweets])
 
         return df
 
-# ========================= Twitter InfoFollower ================================= #
+# ========================= Twitter InfoFollower ============================ #
 
 class FollowerAnalyzer():
     """
@@ -154,15 +154,22 @@ class FollowerAnalyzer():
 
     def followers_to_data_frame(self, followers):
 
-        df = pda.DataFrame(data=[follower.screen_name for follower in followers],
-        columns=['screen_name'])
-        df['location'] = numpy.array([follower.location for follower in followers])
-        df['protected'] = numpy.array([follower.protected for follower in followers])
-        df['verified'] = numpy.array([follower.verified for follower in followers])
-        df['num_follower'] = numpy.array([follower.followers_count for follower in followers])
-        df['num_friends'] = numpy.array([follower.friends_count for follower in followers])
-        df['num_tweet'] = numpy.array([follower.statuses_count for follower in followers])
+        df = pda.DataFrame(data=[follower.screen_name for follower in
+        followers], columns=['screen_name'])
+        df['location'] = npy.array([follower.location for follower in
+        followers])
+        df['protected'] = npy.array([follower.protected for follower in
+        followers])
+        df['verified'] = npy.array([follower.verified for follower in
+        followers])
+        df['num_follower'] = npy.array([follower.followers_count for follower
+        in followers])
+        df['num_friends'] = npy.array([follower.friends_count for follower
+        in followers])
+        df['num_tweet'] = npy.array([follower.statuses_count for follower
+        in followers])
         return df
+
 
 # ================================ Main ===================================== #
 if __name__ == "__main__":
@@ -185,19 +192,19 @@ if __name__ == "__main__":
 
     """
     # 1ère partie #
-    hash_tag_list = ["Donald Trump", "Macron", "France"]
-    fetched_tweets_filename = "tweets.txt"
-
+    # hash_tag_list = ["Donald Trump", "Macron", "France"]
+    # fetched_tweets_filename = "tweets.txt"
+    #
     # twitter_streamer = TwitterStreamer()
 
     # ATTENTION : boucle infinie : #
     # twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
     # 2ème Partie #
-    twitter_client = TwitterClient('EmmanuelMacron')  # précise nom du compte
+    # twitter_client = TwitterClient('EmmanuelMacron')  # précise nom du compte
 
     # Pour récupérer le 1er tweet de ma timeline ou celle d'un autre compte : #
-    #print(twitter_client.get_user_timeline_tweets(1))
+    # print(twitter_client.get_user_timeline_tweets(1))
 
     # Pour récupérer le 1er follower ma liste de followers ou celle d'un autre
     # compte : #
@@ -222,14 +229,15 @@ if __name__ == "__main__":
     => On peut choisir d'afficher ce tableau avec : print(df.head(10))
     ou 10 est le nombre de tweets qu'on veut afficher
     """
-    # twitter_client = TwitterClient()
-    # tweet_analyser = TweetAnalyser()
-    # api = twitter_client.get_twitter_client_api()
+    twitter_client = TwitterClient()
+    tweet_analyser = TweetAnalyser()
 
-    # tweets = api.user_timeline(screen_name="univbordeaux", count=200)
-    # tweets = api.followers(screen_name="Maxence_21_")
+    api = twitter_client.get_twitter_client_api()
 
-    # df = tweet_analyser.tweets_to_data_frame(tweets)
+    tweets = api.user_timeline(screen_name="realDonaldTrump", count=200)
+    # # tweets = api.followers(screen_name="")
+
+    df = tweet_analyser.tweets_to_data_frame(tweets)
 
     # print(df.head(10))
     # print(dir(tweets[0])) # pour obtenir les key words dont on a besoin
@@ -240,26 +248,27 @@ if __name__ == "__main__":
     followers d'un utilisateur (localisation, nombre de followers, amis..)
     On affiche le tableau avec print(df)
     """
+    # twitter_client = TwitterClient('EmmanuelMacron')
     # follower_analyser = FollowerAnalyzer()
-    # followers = twitter_client.get_follower_list(10)
-    # df = follower_analyser.followers_to_data_frame(followers)
+    #
+    # follower_list = twitter_client.get_follower_list(20)
+    #
+    # df = follower_analyser.followers_to_data_frame(follower_list)
     # print(df)
-
 
     """
     # Sentiment Analysis # (Ne marche qu'en anglais mais possible en fr)
     """
-    # df['sentiment'] = numpy.array([tweet_analyser.analyze_sentiment(tweet)
-    # for tweet in df['tweets']])
-
+    # df['sentiment'] = npy.array([tweet_analyser.analyze_sentiment(tweet)for tweet in df['tweets']])
+    # print(df.head(20))
     """ Get average length over all tweets. """
-    # print(numpy.mean(df['len']))
+    # print(npy.mean(df['len']))
 
     """ Get the number of likes for the most liked tweet. """
-    # print(numpy.max(df['likes']))
+    # print(npy.max(df['likes']))
 
     """ Get the number of retweets for the most retweeted tweet. """
-    # print(numpy.max(df['retweets']))
+    # print(npy.max(df['retweets']))
 
     """
     PLOT :
@@ -271,13 +280,13 @@ if __name__ == "__main__":
     """
 
     # Time Likes
-    # time_likes = pda.Series(data=df['likes'].values, index=df['date'])
+    time_likes = pda.Series(data=df['likes'].values, index=df['date'])
     # time_likes.plot(figsize=(16, 4), color='r')
 
     # Time Retweets
-    # time_retweets = pda.Series(data=df['retweets'].values, index=df['date'])
+    time_retweets = pda.Series(data=df['retweets'].values, index=df['date'])
     # time_retweets.plot(figsize=(16, 4), color='r')
 
-    # time_likes.plot(figsize=(16, 4), label="like", legend=True)
-    # time_retweets.plot(figsize=(16, 4), label="retweets", legend=True)
-    # plt.show()
+    time_likes.plot(figsize=(16, 4), label="like", legend=True)
+    time_retweets.plot(figsize=(16, 4), label="retweets", legend=True)
+    plt.show()
