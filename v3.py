@@ -6,6 +6,7 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 from textblob import TextBlob
+import datetime
 
 import ter_credentials as ter_c
 import numpy as npy
@@ -52,6 +53,20 @@ class TwitterClient():
         id=self.twitter_user).items(num_tweets):
             home_timeline_tweets.append(tweet)
         return home_timeline_tweets
+
+    def get_hashtag_tweets(self, num_tweets, query, language=None, start_date=None, end_date=None):
+        hashtag_tweets = []
+        for tweet in Cursor(self.twitter_client.search,
+        q=query, lang=language,  tweet_mode='extended', since=start_date, until=end_date).items(num_tweets):
+            print(tweet.full_text)
+            print(tweet.created_at)
+            # if tweet.created_at < end_date and tweet.created_at > start_date:
+            # if 'retweeted_status' in dir(tweet):
+            #     hashtag_tweets.append(tweet.retweeted_status.full_text)
+            # else:
+            #     hashtag_tweets.append(tweet.full_text)
+            hashtag_tweets.append(tweet)
+        return hashtag_tweets
 
 # ========================= Twitter Authenticater ========================= #
 class TwitterAuthenticator():
@@ -120,6 +135,11 @@ class TweetAnalyser():
     """
 
     def clean_tweet(self, tweet):
+        # emoji_pattern = re.compile("["
+        # u"\U0001F600-\U0001F64F"  # emoticons
+        # u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+        # u"\U0001F680-\U0001F6FF"  # transport & map symbols
+        # u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
         return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
 
     def analyze_sentiment(self, tweet):
@@ -133,15 +153,16 @@ class TweetAnalyser():
             return -1
 
     def tweets_to_data_frame(self, tweets):
-        df = pda.DataFrame(data=[tweet.text for tweet in tweets],
+        df = pda.DataFrame(data=[tweet.full_text for tweet in tweets],
         columns=['tweets'])
 
         df['id'] = npy.array([tweet.id for tweet in tweets])
-        df['len'] = npy.array([len(tweet.text) for tweet in tweets])
+        df['len'] = npy.array([len(tweet.full_text) for tweet in tweets])
         df['date'] = npy.array([tweet.created_at for tweet in tweets])
         df['source'] = npy.array([tweet.source for tweet in tweets])
         df['likes'] = npy.array([tweet.favorite_count for tweet in tweets])
         df['retweets'] = npy.array([tweet.retweet_count for tweet in tweets])
+        # df['sentiment'] = npy.array([self.analyze_sentiment(tweet.full_text)for tweet in tweets])
 
         return df
 
@@ -201,7 +222,7 @@ if __name__ == "__main__":
     # twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
     # 2ème Partie #
-    # twitter_client = TwitterClient('EmmanuelMacron')  # précise nom du compte
+    twitter_client = TwitterClient()  # précise nom du compte
 
     # Pour récupérer le 1er tweet de ma timeline ou celle d'un autre compte : #
     # print(twitter_client.get_user_timeline_tweets(1))
@@ -216,6 +237,19 @@ if __name__ == "__main__":
     # Pour récupérer le 1er tweet de la timeline QUE de mon compte : #
     # print(twitter_client.get_home_timeline_tweets(1))
 
+    # Pour récupérer certains tweet avec un certain hashtag #
+    # print(twitter_client.get_hashtag_tweets(20, 'teich', 'fr'))
+    tweet_analyser = TweetAnalyser()
+
+    start_date = datetime.datetime(2019, 4, 1, 0, 0, 0)
+    end_date = datetime.datetime(2019, 4, 9, 0, 0, 0)
+
+    tweets = twitter_client.get_hashtag_tweets(1, 'sfr', 'fr')
+    # tweets = twitter_client.get_hashtag_tweets(20, 'App', 'en')
+    # df = tweet_analyser.tweets_to_data_frame(tweets)
+    # print(df)
+    print(tweets)
+
     """
     on stock dans tweets les x (ici x =200) derniers tweets d'un compte twitter
     username you can use :
@@ -229,15 +263,15 @@ if __name__ == "__main__":
     => On peut choisir d'afficher ce tableau avec : print(df.head(10))
     ou 10 est le nombre de tweets qu'on veut afficher
     """
-    twitter_client = TwitterClient()
-    tweet_analyser = TweetAnalyser()
-
-    api = twitter_client.get_twitter_client_api()
-
-    tweets = api.user_timeline(screen_name="realDonaldTrump", count=200)
-    # # tweets = api.followers(screen_name="")
-
-    df = tweet_analyser.tweets_to_data_frame(tweets)
+    # twitter_client = TwitterClient()
+    # tweet_analyser = TweetAnalyser()
+    #
+    # api = twitter_client.get_twitter_client_api()
+    #
+    # tweets = api.user_timeline(screen_name="realDonaldTrump", count=200)
+    # # # tweets = api.followers(screen_name="")
+    #
+    # df = tweet_analyser.tweets_to_data_frame(tweets)
 
     # print(df.head(10))
     # print(dir(tweets[0])) # pour obtenir les key words dont on a besoin
@@ -279,14 +313,14 @@ if __name__ == "__main__":
     Enfin, on peut avoir la combinaison des deux
     """
 
-    # Time Likes
-    time_likes = pda.Series(data=df['likes'].values, index=df['date'])
-    # time_likes.plot(figsize=(16, 4), color='r')
-
-    # Time Retweets
-    time_retweets = pda.Series(data=df['retweets'].values, index=df['date'])
-    # time_retweets.plot(figsize=(16, 4), color='r')
-
-    time_likes.plot(figsize=(16, 4), label="like", legend=True)
-    time_retweets.plot(figsize=(16, 4), label="retweets", legend=True)
-    plt.show()
+    # # Time Likes
+    # time_likes = pda.Series(data=df['likes'].values, index=df['date'])
+    # # time_likes.plot(figsize=(16, 4), color='r')
+    #
+    # # Time Retweets
+    # time_retweets = pda.Series(data=df['retweets'].values, index=df['date'])
+    # # time_retweets.plot(figsize=(16, 4), color='r')
+    #
+    # time_likes.plot(figsize=(16, 4), label="like", legend=True)
+    # time_retweets.plot(figsize=(16, 4), label="retweets", legend=True)
+    # plt.show()
