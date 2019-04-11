@@ -29,7 +29,7 @@ class TwitterClient():
     def get_user_timeline_tweets(self, num_tweets):
         tweets = []
         for tweet in Cursor(self.twitter_client.user_timeline,
-        id=self.twitter_user).items(num_tweets):
+        id=self.twitter_user, tweet_mode='extended').items(num_tweets):
             tweets.append(tweet)
         return tweets
 
@@ -160,7 +160,7 @@ class TweetAnalyser():
         df['source'] = npy.array([tweet.source for tweet in tweets])
         df['likes'] = npy.array([tweet.favorite_count for tweet in tweets])
         df['retweets'] = npy.array([tweet.retweet_count for tweet in tweets])
-        # df['sentiment'] = npy.array([self.analyze_sentiment(tweet.full_text)for tweet in tweets])
+        df['sentiment'] = npy.array([self.analyze_sentiment(tweet.full_text)for tweet in tweets])
 
         return df
 
