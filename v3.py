@@ -57,9 +57,7 @@ class TwitterClient():
     def get_hashtag_tweets(self, num_tweets, query, language=None, start_date=None, end_date=None):
         hashtag_tweets = []
         for tweet in Cursor(self.twitter_client.search,
-        q=query, lang=language,  tweet_mode='extended', since=start_date, until=end_date).items(num_tweets):
-            print(tweet.full_text)
-            print(tweet.created_at)
+        q=query, lang=language,  tweet_mode='extended', since=start_date).items(num_tweets):
             # if tweet.created_at < end_date and tweet.created_at > start_date:
             # if 'retweeted_status' in dir(tweet):
             #     hashtag_tweets.append(tweet.retweeted_status.full_text)
@@ -241,14 +239,14 @@ if __name__ == "__main__":
     # print(twitter_client.get_hashtag_tweets(20, 'teich', 'fr'))
     tweet_analyser = TweetAnalyser()
 
-    start_date = datetime.datetime(2019, 4, 1, 0, 0, 0)
-    end_date = datetime.datetime(2019, 4, 9, 0, 0, 0)
+    start_date = datetime.datetime(2019, 4, 8, 0, 0, 0)
+    # end_date = datetime.datetime(2018, 3, 28, 0, 0, 0)
 
-    tweets = twitter_client.get_hashtag_tweets(1, 'sfr', 'fr')
+    tweets = twitter_client.get_hashtag_tweets(20, 'sfr', 'fr', start_date)
     # tweets = twitter_client.get_hashtag_tweets(20, 'App', 'en')
     # df = tweet_analyser.tweets_to_data_frame(tweets)
     # print(df)
-    print(tweets)
+    # (tweets)
 
     """
     on stock dans tweets les x (ici x =200) derniers tweets d'un compte twitter
