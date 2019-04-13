@@ -9,15 +9,17 @@ if __name__ == '__main__':
     "- To select a twitter account and get information : 2\n"
     "- To get tweets from user timeline: 3\n"
     "- To get tweets with a specific #hashtag : 4\n"
-    "- To get the list of followers for a twitter account : 5\n")
+    "- To get the list of followers for a twitter account : 5\n"
+    "- To get TRENDS : 6\n")
+
     _continue = True
 
     while _continue is True:
         choice = int(input(text))
         # if not os.path.isfile(param): ValueError("need a python file")
         assert isinstance(choice, int), "%s is not a int" % choice
-        if choice not in [1,2,3,4,5]:
-            print("choice has to be be between 1 & 5.")
+        if choice not in [1,2,3,4,5,6]:
+            print("choice has to be be between 1 & 6.")
         else:
             if choice == 1:
                 _input_list = input("Type in hashtag words: (ex: Donald Trump"
@@ -173,6 +175,15 @@ if __name__ == '__main__':
                 df = follower_analyser.followers_to_data_frame(follower_list)
                 print(df.head(_nb_df))
 
+                print("#===================== CONTINUE ?====================#")
+                answer = input(" Continue ? y/n\n")
+                if answer == "n":
+                    _continue = False
+            elif choice == 6:
+                twitter_client = TwitterClient()
+                trends = twitter_client.get_trends(23424819)
+                print(trends)
+                print()
                 print("#===================== CONTINUE ?====================#")
                 answer = input(" Continue ? y/n\n")
                 if answer == "n":
