@@ -139,7 +139,6 @@ class TwitterStreamer():
         stream.filter(track=hash_tag_list)
 
 
-
 # ====================== Twitter Stream Listener =========================== #
 class TwitterListener(StreamListener):
 
