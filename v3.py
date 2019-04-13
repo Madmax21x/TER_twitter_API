@@ -13,6 +13,7 @@ import numpy as npy
 import pandas as pda
 import re
 import matplotlib.pyplot as plt
+import json
 
 
 # ========================= Twitter Client ================================= #
@@ -65,6 +66,30 @@ class TwitterClient():
             #     hashtag_tweets.append(tweet.full_text)
             hashtag_tweets.append(tweet)
         return hashtag_tweets
+
+    def get_trends(self, country_WOE_ID):
+        # trends = self.twitter_client.trends_place(1)
+        # trend_data = []
+        # liste_tweets =[]
+        # for trend in trends[0]["trends"]:
+        #     trend_tweets = []
+        #     trend_tweets.append(trend['name'])
+        #     #for tweet in Cursor(self.twitter_client.search, q = trend['name'], lang=language).items(num_tweets):
+        #         #liste_tweets.append(tweet)
+        #     trend_data.append(tuple(trend_tweets))
+        # France_WOE_ID = 23424819
+
+        country_trends = self.twitter_client.trends_place(country_WOE_ID)
+
+        trends = json.loads(json.dumps(country_trends, indent=1))
+        liste_tweets = []
+        for trend in trends[0]["trends"]:
+            # si on veut juste récupérer juste le hashtag
+            # liste_tweets.append(trend['name'])
+            # si on récupère plus d'info
+            liste_tweets.append(trend)
+
+        return liste_tweets
 
 # ========================= Twitter Authenticater ========================= #
 class TwitterAuthenticator():
