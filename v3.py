@@ -14,7 +14,7 @@ import pandas as pda
 import re
 import matplotlib.pyplot as plt
 import json
-
+import collections
 
 # ========================= Twitter Client ================================= #
 class TwitterClient():
@@ -65,20 +65,40 @@ class TwitterClient():
             # else:
             #     hashtag_tweets.append(tweet.full_text)
             hashtag_tweets.append(tweet)
+
         return hashtag_tweets
 
-    def get_trends(self, country_WOE_ID):
-        # trends = self.twitter_client.trends_place(1)
-        # trend_data = []
-        # liste_tweets =[]
-        # for trend in trends[0]["trends"]:
-        #     trend_tweets = []
-        #     trend_tweets.append(trend['name'])
-        #     #for tweet in Cursor(self.twitter_client.search, q = trend['name'], lang=language).items(num_tweets):
-        #         #liste_tweets.append(tweet)
-        #     trend_data.append(tuple(trend_tweets))
-        # France_WOE_ID = 23424819
+    def get_other_hashtag(self, num_tweets, query, language=None):
+        tweets_hash = self.get_hashtag_tweets(num_tweets, query, language)
+        liste_to_clean = ['que','est','une','Une','pas','suis', 'elle', 'Elle',
+        'Nous', 'nous','ont','vous','Vous', 'avons', 'avez', 'pour', 'Pour',
+        'par']
 
+        tweets_text = []
+        for tweet in tweets_hash:
+            if 'retweeted_status' in dir(tweet):
+                tweets_text.append(tweet.retweeted_status.full_text)
+            else:
+                tweets_text.append(tweet.full_text)
+
+        # Les mots les plus fréquents dans les tweets avec un #
+        for text in tweets_text:
+            for elem in liste_to_clean:
+                if elem in text:
+                    text = text.replace(elem, '')
+            counts = collections.Counter(text.split())
+            counts.most_common()
+            liste_frequent = []
+            liste_hashtags = []
+            for cle, values in counts.items():
+                if values >= 2 and len(cle) >= 3:
+                    liste_frequent.append({cle, values})
+                if cle[0] == '#':
+                    liste_hashtags.append({cle, values})
+        return (liste_frequent, liste_hashtags)
+
+    def get_trends(self, country_WOE_ID=23424819):
+        # France_WOE_ID = 23424819
         country_trends = self.twitter_client.trends_place(country_WOE_ID)
 
         trends = json.loads(json.dumps(country_trends, indent=1))
@@ -90,6 +110,7 @@ class TwitterClient():
             liste_tweets.append(trend)
 
         return liste_tweets
+
 
 # ========================= Twitter Authenticater ========================= #
 class TwitterAuthenticator():
