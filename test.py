@@ -10,7 +10,8 @@ if __name__ == '__main__':
     "- To get tweets from user timeline: 3\n"
     "- To get tweets with a specific #hashtag : 4\n"
     "- To get the list of followers for a twitter account : 5\n"
-    "- To get TRENDS : 6\n")
+    "- To get TRENDS : 6\n"
+    "- To get other # Frequency : 7\n")
 
     _continue = True
 
@@ -18,8 +19,8 @@ if __name__ == '__main__':
         choice = int(input(text))
         # if not os.path.isfile(param): ValueError("need a python file")
         assert isinstance(choice, int), "%s is not a int" % choice
-        if choice not in [1,2,3,4,5,6]:
-            print("choice has to be be between 1 & 6.")
+        if choice not in [1, 2, 3, 4, 5, 6, 7]:
+            print("choice has to be be between 1 & 7.")
         else:
             if choice == 1:
                 _input_list = input("Type in hashtag words: (ex: Donald Trump"
@@ -37,10 +38,11 @@ if __name__ == '__main__':
                     _continue = False
             elif choice == 2:
                 _account = input("Type in twitter account\n(ex:realDonaldTrump"
-                "; EmmanuelMacron ; futuroscope ; SFR ; elonmusk ; univbordeaux)\n")
+                "; EmmanuelMacron ; futuroscope ; SFR ; elonmusk ;"
+                "univbordeaux)\n")
                 twitter_client = TwitterClient(_account)
 
-                answer = input(" Get the first tweet of account timeline ? y/n\n")
+                answer = input("Get the first tweet of account timeline ? y/n\n")
                 if answer == "y":
                     print(twitter_client.get_user_timeline_tweets(1))
 
@@ -180,11 +182,36 @@ if __name__ == '__main__':
                 if answer == "n":
                     _continue = False
             elif choice == 6:
+                        # France_WOE_ID = 23424819
+                _woe_id = input("Type in WOE_ID :(default set to France)")
                 twitter_client = TwitterClient()
-                trends = twitter_client.get_trends(23424819)
+                if _woe_id == '':
+                    trends = twitter_client.get_trends()
+                else:
+                    trends = twitter_client.get_trends(int(_woe_id))
+
                 print(trends)
                 print()
                 print("#===================== CONTINUE ?====================#")
                 answer = input(" Continue ? y/n\n")
                 if answer == "n":
                     _continue = False
+            elif choice == 7:
+                _hashtag = input(" Type in hashtag or key word wanted :\n"
+                "(ex: sfr ; sncf ; france)\n")
+                _l = input("Which language ? (ex: en ; fr)\n")
+                _nb = int(input("Number of tweets ?\n"))
+
+                twitter_client = TwitterClient()
+                tweet_analyser = TweetAnalyser()
+
+                # start_date = datetime.datetime(2019, 4, 8, 0, 0, 0)
+                # end_date = datetime.datetime(2018, 3, 28, 0, 0, 0)
+                # tweets = twitter_client.get_hashtag_tweets(20, 'sfr', 'fr', start_date)
+
+                tweets = twitter_client.get_other_hashtag(_nb, _hashtag, _l)
+
+                print("Les mots les plus fréquents:")
+                print(tweets[0])
+                print("Les hashtags présents:")
+                print(tweets[1])
