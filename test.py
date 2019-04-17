@@ -182,8 +182,8 @@ if __name__ == '__main__':
                 if answer == "n":
                     _continue = False
             elif choice == 6:
-                        # France_WOE_ID = 23424819
-                _woe_id = input("Type in WOE_ID :(default set to France)")
+                _woe_id = input("Type in WOE_ID :(default set to France)\n"
+                " Bordeaux : 580778 ; Paris : 615702 ; N-Y : 2347591\n")
                 twitter_client = TwitterClient()
                 if _woe_id == '':
                     trends = twitter_client.get_trends()
