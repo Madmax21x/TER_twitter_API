@@ -55,17 +55,15 @@ class TwitterClient():
             home_timeline_tweets.append(tweet)
         return home_timeline_tweets
 
-    def get_hashtag_tweets(self, num_tweets, query, language=None, start_date=None, end_date=None):
+    def get_hashtag_tweets(self, num_tweets, query, language=None, start_date=None):
         hashtag_tweets = []
         for tweet in Cursor(self.twitter_client.search,
-        q=query, lang=language,  tweet_mode='extended', since=start_date).items(num_tweets):
+                            q=query,
+                            lang=language,
+                            tweet_mode='extended',
+                            since=start_date).items(num_tweets):
             # if tweet.created_at < end_date and tweet.created_at > start_date:
-            # if 'retweeted_status' in dir(tweet):
-            #     hashtag_tweets.append(tweet.retweeted_status.full_text)
-            # else:
-            #     hashtag_tweets.append(tweet.full_text)
             hashtag_tweets.append(tweet)
-
         return hashtag_tweets
 
     def get_other_hashtag(self, num_tweets, query, language=None):
@@ -184,7 +182,9 @@ class TweetAnalyser():
         # u"\U0001F300-\U0001F5FF"  # symbols & pictographs
         # u"\U0001F680-\U0001F6FF"  # transport & map symbols
         # u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+        #                    "]+", flags=re.UNICODE)
         return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
+        # return emoji_pattern.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", tweet)
 
     def analyze_sentiment(self, tweet):
         analysis = TextBlob(self.clean_tweet(tweet))
@@ -238,133 +238,21 @@ class FollowerAnalyzer():
 
 # ================================ Main ===================================== #
 if __name__ == "__main__":
-    """
-    La première partie : permet de récuper dans un fichier certains tweets
-    avec certains mots clés : ici la "hash_tag_list"
+    # _hashtag = input(" Type in hashtag or key word wanted :\n"
+    # "(ex: sfr ; sncf ; france)\n")
+    # _l = input("Which language ? (ex: en ; fr)\n")
+    # _nb = int(input("Number of tweets ?\n"))
+    # _nb_df = int(input("How many tweets do you want to show"
+    # "in the data frame ?\n"))
 
-    Pour l'instant tout n'est pas au point car il y aura des tweets en continu
-    ( un peu comme une boucle infinie ) si on utilise stream_tweets()
-
-    La seconde partie :
-    On peut préciser le nom du compte twitter qu'on veut analyser : par défault
-    ce sera mon compte.
-
-    On a pour le moment mis à disposition 3 méthodes :
-    - get_user_timeline_tweets(Pour récupérer les tweets d'un compte en direct)
-    - get_friend_list(Pour récupérer la liste d'amis d'un compte en direct)
-    - get_home_timeline_tweets(Pour récupérer le 1er tweet de la timeline QUE
-    de mon compte)
-
-    """
-    # 1ère partie #
-    # hash_tag_list = ["Donald Trump", "Macron", "France"]
-    # fetched_tweets_filename = "tweets.txt"
-    #
-    # twitter_streamer = TwitterStreamer()
-
-    # ATTENTION : boucle infinie : #
-    # twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-
-    # 2ème Partie #
-    twitter_client = TwitterClient()  # précise nom du compte
-
-    # Pour récupérer le 1er tweet de ma timeline ou celle d'un autre compte : #
-    # print(twitter_client.get_user_timeline_tweets(1))
-
-    # Pour récupérer le 1er follower ma liste de followers ou celle d'un autre
-    # compte : #
-    # print(twitter_client.get_follower_list(1))
-
-    # Pour récupérer le 1er ami ma liste d'amis ou celle d'un autre compte : #
-    # print(twitter_client.get_friend_list(1))
-
-    # Pour récupérer le 1er tweet de la timeline QUE de mon compte : #
-    # print(twitter_client.get_home_timeline_tweets(1))
-
-    # Pour récupérer certains tweet avec un certain hashtag #
-    # print(twitter_client.get_hashtag_tweets(20, 'teich', 'fr'))
+    twitter_client = TwitterClient()
     tweet_analyser = TweetAnalyser()
 
-    start_date = datetime.datetime(2019, 4, 8, 0, 0, 0)
+    start_date = datetime.datetime(2019, 3, 28, 0, 0, 0)
     # end_date = datetime.datetime(2018, 3, 28, 0, 0, 0)
+    date_since = "2019-04-11"
+    tweets = twitter_client.get_hashtag_tweets(12, 'sfr', 'fr', date_since)
 
-    tweets = twitter_client.get_hashtag_tweets(20, 'sfr', 'fr', start_date)
-    # tweets = twitter_client.get_hashtag_tweets(20, 'App', 'en')
-    # df = tweet_analyser.tweets_to_data_frame(tweets)
-    # print(df)
-    # (tweets)
-
-    """
-    on stock dans tweets les x (ici x =200) derniers tweets d'un compte twitter
-    username you can use :
-    realDonaldTrump ; EmmanuelMacron ; futuroscope ; SFR ; Apple ; univbordeaux
-
-    =>Toute la partie Analyse de la var tweets ou sont stockées tous les tweets
-    se fait dans la class TweetAnalyser() : on utilise la bibliotèque pandas
-    pour pouvoir stocker les tweets dans un tableau avec certaines indexations.
-    Pour connaitre toutes les indexations possibles : print(dir(tweets[0]))
-
-    => On peut choisir d'afficher ce tableau avec : print(df.head(10))
-    ou 10 est le nombre de tweets qu'on veut afficher
-    """
-    # twitter_client = TwitterClient()
-    # tweet_analyser = TweetAnalyser()
-    #
-    # api = twitter_client.get_twitter_client_api()
-    #
-    # tweets = api.user_timeline(screen_name="realDonaldTrump", count=200)
-    # # # tweets = api.followers(screen_name="")
-    #
-    # df = tweet_analyser.tweets_to_data_frame(tweets)
-
-    # print(df.head(10))
-    # print(dir(tweets[0])) # pour obtenir les key words dont on a besoin
-    # print(tweets[0].retweet_count)
-
-    """
-    -> On stock aussi dans un tableau les informations qu'on peut avoir sur les
-    followers d'un utilisateur (localisation, nombre de followers, amis..)
-    On affiche le tableau avec print(df)
-    """
-    # twitter_client = TwitterClient('EmmanuelMacron')
-    # follower_analyser = FollowerAnalyzer()
-    #
-    # follower_list = twitter_client.get_follower_list(20)
-    #
-    # df = follower_analyser.followers_to_data_frame(follower_list)
-    # print(df)
-
-    """
-    # Sentiment Analysis # (Ne marche qu'en anglais mais possible en fr)
-    """
-    # df['sentiment'] = npy.array([tweet_analyser.analyze_sentiment(tweet)for tweet in df['tweets']])
-    # print(df.head(20))
-    """ Get average length over all tweets. """
-    # print(npy.mean(df['len']))
-
-    """ Get the number of likes for the most liked tweet. """
-    # print(npy.max(df['likes']))
-
-    """ Get the number of retweets for the most retweeted tweet. """
-    # print(npy.max(df['retweets']))
-
-    """
-    PLOT :
-    Pour s'amuser, on peut créer des graphiques avec certaines infos :
-    Ici on peut avoir séparément un plot des likes en fonciton du temps des
-    tweets d'un certain compte avec Time likes
-    On peut avoir la même chose pour les retweets
-    Enfin, on peut avoir la combinaison des deux
-    """
-
-    # # Time Likes
-    # time_likes = pda.Series(data=df['likes'].values, index=df['date'])
-    # # time_likes.plot(figsize=(16, 4), color='r')
-    #
-    # # Time Retweets
-    # time_retweets = pda.Series(data=df['retweets'].values, index=df['date'])
-    # # time_retweets.plot(figsize=(16, 4), color='r')
-    #
-    # time_likes.plot(figsize=(16, 4), label="like", legend=True)
-    # time_retweets.plot(figsize=(16, 4), label="retweets", legend=True)
-    # plt.show()
+    # tweets = twitter_client.get_hashtag_tweets(_nb, _hashtag, _l)
+    df = tweet_analyser.tweets_to_data_frame(tweets)
+    print(df.head(10))
