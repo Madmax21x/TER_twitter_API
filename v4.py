@@ -294,7 +294,7 @@ if __name__ == "__main__":
     # api = twitter_client.get_twitter_client_api()
     #
     # tweets = twitter_client.get_hashtag_tweets(20, "teich", "fr")
-    tweets = twitter_client.get_other_hashtag(10, "sfr", "fr")
+    tweets = twitter_client.get_other_hashtag(30, "hmfrance", "fr")
     print(tweets)
     # df = tweet_analyser.tweets_to_data_frame(tweets)
     # print(df)
