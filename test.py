@@ -1,4 +1,5 @@
-from v3 import *
+# from v3 import *
+from v3_text_blob import *
 import pandas as pda
 import numpy as npy
 import matplotlib.pyplot as plt
@@ -64,6 +65,7 @@ if __name__ == '__main__':
             elif choice == 3:
                 _account = input("Type in twitter account\n(ex:realDonaldTrump"
                 "; EmmanuelMacron ; futuroscope ; SFR ; elonmusk ; univbordeaux)\n")
+                _l = input("Which language ? (ex: en ; fr)\n")
                 _nb = int(input("Number of tweets ?\n"))
                 _nb_df = int(input("How many tweets do you want to show"
                 " in the data frame ?\n"))
@@ -71,7 +73,7 @@ if __name__ == '__main__':
                 twitter_client = TwitterClient(_account)
                 tweet_analyser = TweetAnalyser()
                 tweets = twitter_client.get_user_timeline_tweets(_nb)
-                df = tweet_analyser.tweets_to_data_frame(tweets)
+                df = tweet_analyser.tweets_to_data_frame(tweets, _l)
 
                 print(df.head(_nb_df))
                 print()
@@ -126,7 +128,7 @@ if __name__ == '__main__':
                 # tweets = twitter_client.get_hashtag_tweets(20, 'sfr', 'fr', start_date)
 
                 tweets = twitter_client.get_hashtag_tweets(_nb, _hashtag, _l)
-                df = tweet_analyser.tweets_to_data_frame(tweets)
+                df = tweet_analyser.tweets_to_data_frame(tweets, _l)
                 print(df.head(_nb_df))
                 print()
                 df_1 = pda.DataFrame(data=[_hashtag], columns=[' # Stats'])
