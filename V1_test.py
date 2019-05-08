@@ -26,14 +26,45 @@ class TwitterClient():
         self.auth = TwitterAuthenticator().authenticate_twitter_app()
         self.twitter_client = API(self.auth)
         self.twitter_user = twitter_user
-        for tweet in self.twitter_client.search('boeing'):
-            print(tweet.text)
 
     def stream(self, data, file_name, df):
         i = 0
-        for tweet in Cursor(self.twitter_client.search, q=data, count=100, lang='en').items():
+        for tweet in Cursor(self.twitter_client.search, q=data, count=100, lang='en', tweet_mode='extended').items():
             print(i, end='\r')
-            df.loc[i, 'Tweets'] = tweet.text
+            # if 'retweeted_status' in tweet._json:
+            #     print('lol')
+            #     if 'extended_tweet' in tweet._json['retweeted_status']:
+            #         df.loc[i, 'Tweets'] = tweet._json['retweeted_status']['full_text']
+            #     else:
+            #         df.loc[i, 'Tweets'] = tweet._json['text']
+            #
+            # else:
+            #     df.loc[i, 'Tweets'] = tweet.full_text
+            if 'extended_tweet' in tweet._json:
+                df.loc[i, 'Tweets'] = tweet.full_text
+
+            elif 'retweeted_status' in tweet._json:
+                if 'extended_tweet' in tweet._json['retweeted_status']:
+                    df.loc[i, 'Tweets'] = tweet._json['retweeted_status']['full_text']
+                else:
+                    # df.loc[i, 'Tweets'] = tweet._json['text']
+                    print(tweet)
+                    break
+
+            else:
+                df.loc[i, 'Tweets'] = tweet.full_text
+            # status_json = status._json
+
+            # if "extended_tweet" in status_json:
+            #     print(status_json['extended_tweet']['full_text'])
+            # elif 'retweeted_status' in status_json:
+            #     if 'extended_tweet' in status_json['retweeted_status']:
+            #         print(status_json['retweeted_status']['extended_tweet']['full_text'])
+            #     else:
+            #         print(status_json['text'])
+            # else: print(status_json['text'])
+
+            df.loc[i, 'Tweets'] = tweet.full_text
             df.loc[i, 'User'] = tweet.user.name
             df.loc[i, 'User_statuses_count'] = tweet.user.statuses_count
             df.loc[i, 'user_followers'] = tweet.user.followers_count
@@ -44,7 +75,7 @@ class TwitterClient():
             df.loc[i, 'tweet_date'] = tweet.created_at
             df.to_excel('{}.xlsx'.format(file_name))
             i += 1
-            if i == 1000:
+            if i == 10:
                 break
             else:
                 pass
