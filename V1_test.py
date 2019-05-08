@@ -4,19 +4,8 @@ from tweepy import API
 from tweepy import Cursor
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
-from tweepy import Stream
 import ter_credentials as ter_c
-import numpy as npy
 import pandas as pda
-
-from textblob import TextBlob
-from wordcloud import WordCloud, STOPWORDS
-import plotly.plotly as py
-import plotly.graph_objs as go
-from plotly.offline import iplot
-import cufflinks
-cufflinks.go_offline()
-cufflinks.set_config_file(world_readable=True, theme='pearl', offline=True)
 
 
 # ========================= Twitter Client ================================= #
@@ -31,40 +20,17 @@ class TwitterClient():
         i = 0
         for tweet in Cursor(self.twitter_client.search, q=data, count=100, lang='en', tweet_mode='extended').items():
             print(i, end='\r')
-            # if 'retweeted_status' in tweet._json:
-            #     print('lol')
-            #     if 'extended_tweet' in tweet._json['retweeted_status']:
-            #         df.loc[i, 'Tweets'] = tweet._json['retweeted_status']['full_text']
-            #     else:
-            #         df.loc[i, 'Tweets'] = tweet._json['text']
-            #
-            # else:
-            #     df.loc[i, 'Tweets'] = tweet.full_text
             if 'extended_tweet' in tweet._json:
-                df.loc[i, 'Tweets'] = tweet.full_text
+                df.loc[i, 'Tweets'] = tweet._json['full_text']
 
-            elif 'retweeted_status' in tweet._json:
+            if 'retweeted_status' in tweet._json:
                 if 'extended_tweet' in tweet._json['retweeted_status']:
                     df.loc[i, 'Tweets'] = tweet._json['retweeted_status']['full_text']
                 else:
-                    # df.loc[i, 'Tweets'] = tweet._json['text']
-                    print(tweet)
-                    break
-
+                    df.loc[i, 'Tweets'] = tweet._json['full_text']
             else:
-                df.loc[i, 'Tweets'] = tweet.full_text
-            # status_json = status._json
+                df.loc[i, 'Tweets'] = tweet._json['full_text']
 
-            # if "extended_tweet" in status_json:
-            #     print(status_json['extended_tweet']['full_text'])
-            # elif 'retweeted_status' in status_json:
-            #     if 'extended_tweet' in status_json['retweeted_status']:
-            #         print(status_json['retweeted_status']['extended_tweet']['full_text'])
-            #     else:
-            #         print(status_json['text'])
-            # else: print(status_json['text'])
-
-            df.loc[i, 'Tweets'] = tweet.full_text
             df.loc[i, 'User'] = tweet.user.name
             df.loc[i, 'User_statuses_count'] = tweet.user.statuses_count
             df.loc[i, 'user_followers'] = tweet.user.followers_count
@@ -76,6 +42,7 @@ class TwitterClient():
             df.to_excel('{}.xlsx'.format(file_name))
             i += 1
             if i == 10:
+                return df
                 break
             else:
                 pass
@@ -120,6 +87,7 @@ class TwitterListener(StreamListener):
             return False
         print(status)
 
+
 # ================================ Main ===================================== #
 if __name__ == "__main__":
 
@@ -131,4 +99,8 @@ if __name__ == "__main__":
                              'user_followers', 'User_location', 'User_verified',
                              'fav_count', 'rt_count', 'tweet_date'])
 
-    twitter_client.stream(data=['boeing'], file_name='my_tweets', df=_df)
+    __df = twitter_client.stream(data=['boeing'], file_name='my_tweets', df=_df)
+    print("ok")
+
+    __df.info()
+    print(__df.head(5))
