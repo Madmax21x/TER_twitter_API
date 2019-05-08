@@ -3,3 +3,6 @@
 *.pyc
 .DS_Store
 ter_credentials.py
+.vscode/settings.json
+.vscode/launch.json
+my_tweets.xlsx
