@@ -4,11 +4,14 @@ import numpy as npy
 import pandas as pda
 from textblob import TextBlob
 from wordcloud import WordCloud, STOPWORDS
+import re
 import plotly
 import plotly.plotly as py
-import plotly.graph_objs as go
-import re
+from plotly.graph_objs import *
+from plotly.offline import plot
 import cufflinks
+import matplotlib.pyplot as plt
+
 cufflinks.go_offline()
 cufflinks.set_config_file(world_readable=True, theme='pearl', offline=True)
 
@@ -31,45 +34,125 @@ def analyze_sentiment(tweet):
         return 'Negative'
 
 
+# ============================== Pie graph ================================== #
+def generate_pie_graph(df):
+    """
+    To see data distribution
+    """
+    _x = ['Positive', 'Negative', 'Neutral']
+    _y = [df['Sentiment'].value_counts()['Positive'],
+        df['Sentiment'].value_counts()['Negative'],
+        df['Sentiment'].value_counts()['Neutral']]
+    trace1 = {
+      "hole": 0.7,
+      "labels": _x,
+      "marker": {
+        "colors": ["#CEA447", "#16335B", "#43AEA8"],
+        "line": {"color": "gray"}
+      },
+      "name": "Test",
+      "type": "pie",
+      "uid": "a682f7",
+      "values": _y
+    }
+    data = Data([trace1])
+    layout = {
+      "autosize": True,
+      "font": {"family": "Roboto"},
+      "height": 480,
+      "hiddenlabels": [None],
+      "hovermode": "closest",
+      "legend": {
+        "x": 0.3029690069703334,
+        "y": 0.5880331896725336
+      },
+      "margin": {
+        "r": 10,
+        "t": 55,
+        "b": 40,
+        "l": 60
+      },
+      "paper_bgcolor": "rgba(255, 255, 255, 0)",
+      "showlegend": True,
+      "title": "Sentiment Anlaysis",
+      "titlefont": {"family": "Roboto"},
+      "width": 485
+    }
+    frame1 = {
+      "layout": {
+        "autosize": True,
+        "font": {"family": "Roboto"},
+        "height": 300,
+        "hovermode": "closest",
+        "legend": {
+          "x": 0.23419500988308342,
+          "y": 0.6814430984363011,
+          "font": {"size": 11}
+        },
+        "margin": {
+          "r": 10,
+          "t": 55,
+          "b": 40,
+          "l": 10
+        },
+        "paper_bgcolor": "rgba(255, 255, 255, 0)",
+        "showlegend": True,
+        "title": "Autre titre",
+        "titlefont": {
+          "family": "Roboto",
+          "size": 15
+        },
+        "width": 300
+      },
+      "name": "workspace-breakpoint-0"
+    }
+    frames = Frames([frame1])
+
+    # Frames are not yet supported for use with Python.
+    fig = Figure(data=data, layout=layout)
+    plot_url = py.plot(fig)
+
+
+# ============================== Wordcloud ================================== #
+def generate_worcloud(df):
+    """
+    Word Frequency in a wordcloud image.
+    """
+    all_tweets = ' '.join(tweet for tweet in df['clean_tweet'])
+
+    wordcloud = WordCloud(stopwords=STOPWORDS, background_color="white").generate(all_tweets)
+
+    plt.figure(figsize = (16,6))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis("off")
+    plt.show()
+
+
 # ================================ Main ===================================== #
 if __name__ == "__main__":
-    print("lol")
     # Read excel file into df
     df = pda.read_excel('test1.xlsx')
 
-    # get info
-    df.info()
+    # # get info
+    # df.info()
 
-    # show first five
-    print(df.head(5))
+    # # show first five
+    # print(df.head(5))
 
-    # Add new sentiment column
+    # # Add new sentiment column & clean tweets
     df['clean_tweet'] = df['Tweets'].apply(lambda x: clean_tweet(x))
     df['Sentiment'] = df['clean_tweet'].apply(lambda x: analyze_sentiment(x))
 
-    # see if has worked
-    n = 500
-    print('Original tweet:\n' + df['Tweets'][n])
-    print()
-    print('Clean tweet:\n'+df['clean_tweet'][n])
-    print()
-    print('Sentiment:\n'+df['Sentiment'][n])
+    # # see if has worked
+    # n = 500
+    # print('Original tweet:\n' + df['Tweets'][n])
+    # print()
+    # print('Clean tweet:\n'+df['clean_tweet'][n])
+    # print()
+    # print('Sentiment:\n'+df['Sentiment'][n])
 
-    # see data distribution
-    # df['Sentiment'].value_counts().py.plot(kind='bar',
-    #                                 xTitle='Sentiment',
-    #                                 yTitle='Count',
-    #                                 title='Overall Sentiment Distribution')
-    plotly.offline.plot(df['Sentiment'].value_counts()(kind='bar', xTitle='Sentiment'))
+    # # generate Pie Graph of sentiment
+    # generate_pie_graph(df)
 
-    # trace0 = go.Scatter(
-    # x=[1, 2, 3, 4],
-    # y=[10, 15, 13, 17]
-    # )
-    # trace1 = go.Scatter(
-    #     x=[1, 2, 3, 4],
-    #     y=[16, 5, 11, 9]
-    # )
-    # data = [trace0, trace1]
-    #
-    # ply.plot(data, filename = 'basic-line', auto_open=True)
+    # # words Frequency
+    # generate_worcloud(df)
