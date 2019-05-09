@@ -16,7 +16,7 @@ import re
 import matplotlib.pyplot as plt
 import json
 import collections
-
+from collections import Counter
 # ========================= Twitter Client ================================= #
 class TwitterClient():
 
@@ -263,8 +263,30 @@ if __name__ == "__main__":
     start_date = datetime.datetime(2019, 3, 28, 0, 0, 0)
     # end_date = datetime.datetime(2018, 3, 28, 0, 0, 0)
     date_since = "2019-04-11"
-    tweets = twitter_client.get_hashtag_tweets(12, 'sfr', 'fr', date_since)
+    tweets = twitter_client.get_hashtag_tweets(20, 'boeing', 'en', date_since)
 
     # tweets = twitter_client.get_hashtag_tweets(_nb, _hashtag, _l)
     df = tweet_analyser.tweets_to_data_frame(tweets)
-    print(df.head(10))
+
+    positive = 0
+    negative = 0
+    neutral = 0
+    print(df['sentiment'].values)
+    for elem in df['sentiment'].values:
+        if elem > 0:
+            positive +=1
+        elif elem < 0:
+            negative +=1
+        else:
+            neutral +=1
+
+
+    colors = ['#00cec9', '#192a56', '#ffeaa7']
+    sizes = [positive, negative, neutral]
+    labels = 'Positive', 'Negative', 'Neutral'
+
+    plt.pie(x=sizes, shadow=True, colors=colors,labels=labels,startangle=90, autopct='%.1f%%')
+
+    #plt.title("Sentiment of {} Tweets about {}".format(number, query))
+    plt.show()
+    #print(df.head(10))
