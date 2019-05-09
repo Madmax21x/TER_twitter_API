@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf8 -*-
-import numpy as npy
 import pandas as pda
 from textblob import TextBlob
 from wordcloud import WordCloud, STOPWORDS
 import re
 import plotly
 import plotly.plotly as py
-from plotly.graph_objs import *
-from plotly.offline import plot
+from plotly.graph_objs import Frames, Figure, Data
 import cufflinks
 import matplotlib.pyplot as plt
 
 cufflinks.go_offline()
 cufflinks.set_config_file(world_readable=True, theme='pearl', offline=True)
 
-plotly.tools.set_credentials_file(username='Maxmaz_21', api_key='ZdVMeKJACewRzgFGxZzo')
+# # Get API plotly credentials
+plotly.tools.set_credentials_file(username='Maxmaz_21',
+                                api_key='ZdVMeKJACewRzgFGxZzo')
 
 
 # ============================== cleaning =================================== #
@@ -106,11 +106,11 @@ def generate_pie_graph(df):
       },
       "name": "workspace-breakpoint-0"
     }
-    frames = Frames([frame1])
+    Frames([frame1])
 
     # Frames are not yet supported for use with Python.
     fig = Figure(data=data, layout=layout)
-    plot_url = py.plot(fig)
+    py.plot(fig)
 
 
 # ============================== Wordcloud ================================== #
@@ -119,12 +119,25 @@ def generate_worcloud(df):
     Word Frequency in a wordcloud image.
     """
     all_tweets = ' '.join(tweet for tweet in df['clean_tweet'])
+    wordcloud = WordCloud(stopwords=STOPWORDS,
+                background_color="white").generate(all_tweets)
 
-    wordcloud = WordCloud(stopwords=STOPWORDS, background_color="white").generate(all_tweets)
-
-    plt.figure(figsize = (16,6))
+    plt.figure(figsize=(16, 6))
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
+    plt.show()
+
+
+# ============================= frequencies ================================= #
+def plot_frequencies(df):
+    all_tweets = ' '.join(tweet for tweet in df['clean_tweet'])
+    wordcloud = WordCloud(stopwords=STOPWORDS,
+                background_color="white").generate(all_tweets)
+
+    df_freq = pda.DataFrame.from_dict(data=wordcloud.words_, orient='index')
+    df_freq = df_freq.head(20)
+    df_freq.plot.bar(figsize=(16, 4))
+    plt.xticks(fontsize=5, rotation=30)
     plt.show()
 
 
@@ -139,20 +152,15 @@ if __name__ == "__main__":
     # # show first five
     # print(df.head(5))
 
-    # # Add new sentiment column & clean tweets
+    # # Add new sentiment column & clean tweets ## IMPORTANT
     df['clean_tweet'] = df['Tweets'].apply(lambda x: clean_tweet(x))
     df['Sentiment'] = df['clean_tweet'].apply(lambda x: analyze_sentiment(x))
-
-    # # see if has worked
-    # n = 500
-    # print('Original tweet:\n' + df['Tweets'][n])
-    # print()
-    # print('Clean tweet:\n'+df['clean_tweet'][n])
-    # print()
-    # print('Sentiment:\n'+df['Sentiment'][n])
 
     # # generate Pie Graph of sentiment
     generate_pie_graph(df)
 
     # # words Frequency
     # generate_worcloud(df)
+
+    # # plot the frequencies
+    # plot_frequencies(df)
