@@ -138,6 +138,8 @@ def plot_frequencies(df):
     df_freq.plot.bar(figsize = (16,4))
     plt.xticks(fontsize=5, rotation=30)
     plt.show()
+
+
 # ================================ Main ===================================== #
 if __name__ == "__main__":
     # Read excel file into df
@@ -152,14 +154,6 @@ if __name__ == "__main__":
     # # Add new sentiment column & clean tweets
     df['clean_tweet'] = df['Tweets'].apply(lambda x: clean_tweet(x))
     df['Sentiment'] = df['clean_tweet'].apply(lambda x: analyze_sentiment(x))
-
-    # # see if has worked
-    # n = 500
-    # print('Original tweet:\n' + df['Tweets'][n])
-    # print()
-    # print('Clean tweet:\n'+df['clean_tweet'][n])
-    # print()
-    # print('Sentiment:\n'+df['Sentiment'][n])
 
     # # generate Pie Graph of sentiment
     # generate_pie_graph(df)
