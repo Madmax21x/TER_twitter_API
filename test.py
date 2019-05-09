@@ -86,6 +86,7 @@ if __name__ == '__main__':
                 _choice = input("-Plot nb of Likes through times : 1\n"
                 "-Plot nb of retweets through times : 2\n"
                 "-Plot both together : 3\n"
+                "-Plot pie chart of sentiments : 4\n"
                 "-Pass : ' '\n")
 
                 if _choice == "1":
@@ -106,6 +107,24 @@ if __name__ == '__main__':
                     time_likes.plot(figsize=(16, 4), label="like", legend=True)
                     time_retweets.plot(figsize=(16, 4), label="retweets",
                                 legend=True)
+                    plt.show()
+                elif _choice == "4":
+                    positive = 0
+                    negative = 0
+                    neutral = 0
+                    for elem in df['sentiment'].values:
+                        if elem > 0:
+                            positive += 1
+                        elif elem < 0:
+                            negative += 1
+                        else:
+                            neutral += 1
+
+                    colors = ['#00cec9', '#192a56', '#ffeaa7']
+                    sizes = [positive, negative, neutral]
+                    labels = 'Positive', 'Negative', 'Neutral'
+                    plt.pie(x=sizes, shadow=True, colors=colors,
+                            labels=labels, startangle=90, autopct='%.1f%%')
                     plt.show()
                 print()
                 print("#===================== CONTINUE ?====================#")
