@@ -16,7 +16,8 @@ import re
 import matplotlib.pyplot as plt
 import json
 import collections
-from collections import Counter
+
+
 # ========================= Twitter Client ================================= #
 class TwitterClient():
 
@@ -178,17 +179,10 @@ class TweetAnalyser():
     """
 
     def clean_tweet(self, tweet):
-        # emoji_pattern = re.compile("["
-        # u"\U0001F600-\U0001F64F"  # emoticons
-        # u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-        # u"\U0001F680-\U0001F6FF"  # transport & map symbols
-        # u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-        #                    "]+", flags=re.UNICODE)
         return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())
-        # return emoji_pattern.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", tweet)
 
-    def analyze_sentiment(self, tweet, lang = 'en' ):
-        if lang == 'fr' :
+    def analyze_sentiment(self, tweet, lang='en'):
+        if lang == 'fr':
             analysis = TextBlob(self.clean_tweet(tweet), pos_tagger=PatternTagger(), analyzer=PatternAnalyzer())
 
             if analysis.sentiment[0] > 0:
@@ -222,8 +216,8 @@ class TweetAnalyser():
 
         return df
 
-# ========================= Twitter InfoFollower ============================ #
 
+# ========================= Twitter InfoFollower ============================ #
 class FollowerAnalyzer():
     """
     Functionality for analysing and categorizing information about followers.
