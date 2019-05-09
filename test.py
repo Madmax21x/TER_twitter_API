@@ -1,8 +1,9 @@
 # from v3 import *
-from v3_text_blob import *
+from v5 import TweetAnalyser, TwitterClient, FollowerAnalyzer, TwitterStreamer
 import pandas as pda
 import numpy as npy
 import matplotlib.pyplot as plt
+
 
 if __name__ == '__main__':
 
@@ -64,7 +65,8 @@ if __name__ == '__main__':
                     _continue = False
             elif choice == 3:
                 _account = input("Type in twitter account\n(ex:realDonaldTrump"
-                "; EmmanuelMacron ; futuroscope ; SFR ; elonmusk ; univbordeaux)\n")
+                "; EmmanuelMacron ; futuroscope ; SFR ; elonmusk ;"
+                "univbordeaux)\n")
                 _l = input("Which language ? (ex: en ; fr)\n")
                 _nb = int(input("Number of tweets ?\n"))
                 _nb_df = int(input("How many tweets do you want to show"
@@ -77,7 +79,8 @@ if __name__ == '__main__':
 
                 print(df.head(_nb_df))
                 print()
-                df_1 = pda.DataFrame(data=[_account], columns=['timeline Stats'])
+                df_1 = pda.DataFrame(data=[_account],
+                                    columns=['timeline Stats'])
                 df_1[' average len'] = npy.mean(df['len'])
                 df_1['+likes'] = npy.max(df['likes'])
                 df_1['+retweets'] = npy.max(df['retweets'])
@@ -142,10 +145,6 @@ if __name__ == '__main__':
                 twitter_client = TwitterClient()
                 tweet_analyser = TweetAnalyser()
 
-                # start_date = datetime.datetime(2019, 4, 8, 0, 0, 0)
-                # end_date = datetime.datetime(2018, 3, 28, 0, 0, 0)
-                # tweets = twitter_client.get_hashtag_tweets(20, 'sfr', 'fr', start_date)
-
                 tweets = twitter_client.get_hashtag_tweets(_nb, _hashtag, _l)
                 df = tweet_analyser.tweets_to_data_frame(tweets, _l)
                 print(df.head(_nb_df))
@@ -206,7 +205,8 @@ if __name__ == '__main__':
                     _continue = False
             elif choice == 5:
                 _account = input("Type in twitter account\n(ex:realDonaldTrump"
-                "; EmmanuelMacron ; futuroscope ; SFR ; Apple ; univbordeaux)\n")
+                "; EmmanuelMacron ; futuroscope ; SFR ; Apple ;"
+                "univbordeaux)\n")
                 _nb = int(input("Number of followers ?\n"))
                 _nb_df = int(input("How many followers do you want to show"
                 "in the data frame ?\n"))
@@ -244,10 +244,6 @@ if __name__ == '__main__':
 
                 twitter_client = TwitterClient()
                 tweet_analyser = TweetAnalyser()
-
-                # start_date = datetime.datetime(2019, 4, 8, 0, 0, 0)
-                # end_date = datetime.datetime(2018, 3, 28, 0, 0, 0)
-                # tweets = twitter_client.get_hashtag_tweets(20, 'sfr', 'fr', start_date)
 
                 tweets = twitter_client.get_other_hashtag(_nb, _hashtag, _l)
 
