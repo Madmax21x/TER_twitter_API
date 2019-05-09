@@ -41,7 +41,7 @@ class TwitterClient():
             df.loc[i, 'tweet_date'] = tweet.created_at
             df.to_excel('{}.xlsx'.format(file_name))
             i += 1
-            if i == 10:
+            if i == 100:
                 return df
                 break
             else:
