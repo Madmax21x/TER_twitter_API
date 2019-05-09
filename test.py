@@ -44,7 +44,8 @@ if __name__ == '__main__':
                 "univbordeaux)\n")
                 twitter_client = TwitterClient(_account)
 
-                answer = input("Get the first tweet of account timeline ? y/n\n")
+                answer = input("Get the first tweet of account"
+                                "timeline ? y/n\n")
                 if answer == "y":
                     print(twitter_client.get_user_timeline_tweets(1))
 
@@ -56,7 +57,8 @@ if __name__ == '__main__':
                 if answer == "y":
                     print(twitter_client.get_friend_list(1))
 
-                answer = input(" Get the first tweet my account timeline ? y/n\n")
+                answer = input(" Get the first tweet my account"
+                                "timeline ? y/n\n")
                 if answer == "y":
                     print(twitter_client.get_home_timeline_tweets(1))
                 print("#===================== CONTINUE ?====================#")
