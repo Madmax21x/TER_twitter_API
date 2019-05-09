@@ -11,6 +11,7 @@ from plotly.graph_objs import *
 from plotly.offline import plot
 import cufflinks
 import matplotlib.pyplot as plt
+import pandas as pda
 
 cufflinks.go_offline()
 cufflinks.set_config_file(world_readable=True, theme='pearl', offline=True)
@@ -119,7 +120,6 @@ def generate_worcloud(df):
     Word Frequency in a wordcloud image.
     """
     all_tweets = ' '.join(tweet for tweet in df['clean_tweet'])
-
     wordcloud = WordCloud(stopwords=STOPWORDS, background_color="white").generate(all_tweets)
 
     plt.figure(figsize = (16,6))
@@ -128,6 +128,16 @@ def generate_worcloud(df):
     plt.show()
 
 
+# ============================= frequencies ================================= #
+def plot_frequencies(df):
+    all_tweets = ' '.join(tweet for tweet in df['clean_tweet'])
+    wordcloud = WordCloud(stopwords=STOPWORDS, background_color="white").generate(all_tweets)
+
+    df_freq = pda.DataFrame.from_dict(data=wordcloud.words_, orient='index')
+    df_freq = df_freq.head(20)
+    df_freq.plot.bar(figsize = (16,4))
+    plt.xticks(fontsize=5, rotation=30)
+    plt.show()
 # ================================ Main ===================================== #
 if __name__ == "__main__":
     # Read excel file into df
@@ -156,3 +166,6 @@ if __name__ == "__main__":
 
     # # words Frequency
     # generate_worcloud(df)
+
+    # # plot the frequencies
+    # plot_frequencies(df)
