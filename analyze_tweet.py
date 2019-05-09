@@ -151,7 +151,7 @@ if __name__ == "__main__":
     # # show first five
     # print(df.head(5))
 
-    # # Add new sentiment column & clean tweets
+    # # Add new sentiment column & clean tweets ## IMPORTANT
     df['clean_tweet'] = df['Tweets'].apply(lambda x: clean_tweet(x))
     df['Sentiment'] = df['clean_tweet'].apply(lambda x: analyze_sentiment(x))
 
