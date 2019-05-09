@@ -1,0 +1,7 @@
+
+.vscode/launch.json
+.vscode/settings.json
+__pycache__/ter_credentials.cpython-37.pyc
+__pycache__/v3.cpython-37.pyc
+__pycache__/v3_text_blob.cpython-37.pyc
+ter_credentials.py
