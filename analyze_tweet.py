@@ -152,7 +152,7 @@ if __name__ == "__main__":
     # print('Sentiment:\n'+df['Sentiment'][n])
 
     # # generate Pie Graph of sentiment
-    # generate_pie_graph(df)
+    generate_pie_graph(df)
 
     # # words Frequency
     # generate_worcloud(df)
