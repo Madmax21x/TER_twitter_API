@@ -147,7 +147,7 @@ class TwitterStreamer():
 class TwitterListener(StreamListener):
 
     """
-     This is a basic listener class that just prints received tweets to stdout.
+     This is a basic listener class that just prints received tweets to study.
     """
 
     def __init__(self, fetched_tweets_filename):
