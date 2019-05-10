@@ -106,9 +106,10 @@ class TwitterClient():
             # si on veut juste récupérer juste le hashtag
             # liste_tweets.append(trend['name'])
             # si on récupère plus d'info
-            liste_tweets.append(trend)
+            liste_tweets.append(trend['name'])
+            for elem in liste_tweets:
 
-        return liste_tweets
+                return elem
 
 
 # ========================= Twitter Authenticater ========================= #
