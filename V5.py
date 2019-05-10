@@ -106,7 +106,7 @@ class TwitterClient():
             # si on veut juste récupérer juste le hashtag
             # liste_tweets.append(trend['name'])
             # si on récupère plus d'info
-            liste_tweets.append(trend)
+            liste_tweets.append(trend['name'])
 
         return liste_tweets
 
