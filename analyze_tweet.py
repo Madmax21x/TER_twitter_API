@@ -7,11 +7,11 @@ import re
 import plotly
 import plotly.plotly as py
 from plotly.graph_objs import Frames, Figure, Data
-import cufflinks
+# import cufflinks
 import matplotlib.pyplot as plt
 
-cufflinks.go_offline()
-cufflinks.set_config_file(world_readable=True, theme='pearl', offline=True)
+# cufflinks.go_offline()
+# cufflinks.set_config_file(world_readable=True, theme='pearl', offline=True)
 
 # # Get API plotly credentials
 plotly.tools.set_credentials_file(username='Maxmaz_21',
@@ -74,7 +74,7 @@ def generate_pie_graph(df):
       },
       "paper_bgcolor": "rgba(255, 255, 255, 0)",
       "showlegend": True,
-      "title": "Sentiment Anlaysis",
+      "title": "Sentiment Analysis",
       "titlefont": {"family": "Roboto"},
       "width": 485
     }
