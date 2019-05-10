@@ -107,9 +107,8 @@ class TwitterClient():
             # liste_tweets.append(trend['name'])
             # si on récupère plus d'info
             liste_tweets.append(trend['name'])
-            for elem in liste_tweets:
 
-                return elem
+        return liste_tweets
 
 
 # ========================= Twitter Authenticater ========================= #
