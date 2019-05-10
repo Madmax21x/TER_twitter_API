@@ -157,10 +157,10 @@ if __name__ == "__main__":
     df['Sentiment'] = df['clean_tweet'].apply(lambda x: analyze_sentiment(x))
 
     # # generate Pie Graph of sentiment
-    generate_pie_graph(df)
+    #generate_pie_graph(df)
 
     # # words Frequency
-    # generate_worcloud(df)
+    #generate_worcloud(df)
 
     # # plot the frequencies
-    # plot_frequencies(df)
+    plot_frequencies(df)
