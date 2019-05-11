@@ -41,7 +41,7 @@ class TwitterClient():
             df.loc[i, 'tweet_date'] = tweet.created_at
             df.to_excel('{}.xlsx'.format(file_name))
             i += 1
-            if i == 100:
+            if i == 1000:
                 return df
                 break
             else:
@@ -60,34 +60,6 @@ class TwitterAuthenticator():
         return auth
 
 
-# ====================== Twitter Stream Listener =========================== #
-class TwitterListener(StreamListener):
-
-    """
-     This is a basic listener class that just prints received tweets to stdout.
-    """
-
-    def __init__(self, fetched_tweets_filename):
-        self.fetched_tweets_filename = fetched_tweets_filename
-
-    def on_data(self, data):
-        try:
-            print(data)
-            with open(self.fetched_tweets_filename, 'a') as tf:
-                tf.write(data)
-                tf.close()
-            return True
-        except BaseException as e:
-            print(" Error on_data: %s" % str(e))
-        return True
-
-    def on_error(self, status):  # how I deal with errors
-        if status == 420:
-            # Returning Fasle on_data_method in case rate limit occurs.
-            return False
-        print(status)
-
-
 # ================================ Main ===================================== #
 if __name__ == "__main__":
 
@@ -100,7 +72,6 @@ if __name__ == "__main__":
                              'fav_count', 'rt_count', 'tweet_date'])
 
     __df = twitter_client.stream(data=['boeing'], file_name='my_tweets', df=_df)
-    print("ok")
 
-    __df.info()
-    print(__df.head(5))
+    # __df.info()
+    # print(__df.head(5))
