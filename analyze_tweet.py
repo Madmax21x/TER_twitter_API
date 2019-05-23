@@ -9,6 +9,7 @@ import plotly.plotly as py
 from plotly.graph_objs import Frames, Figure, Data
 # import cufflinks
 import matplotlib.pyplot as plt
+from textblob_fr import PatternTagger, PatternAnalyzer
 
 # cufflinks.go_offline()
 # cufflinks.set_config_file(world_readable=True, theme='pearl', offline=True)
@@ -24,14 +25,25 @@ def clean_tweet(tweet):
 
 
 # ============================== sentiment ================================== #
-def analyze_sentiment(tweet):
-    analysis = TextBlob(tweet)
-    if analysis.sentiment.polarity > 0:
-        return 'Positive'
-    elif analysis.sentiment.polarity == 0:
-        return 'Neutral'
+def analyze_sentiment(tweet, lang='en'):
+
+    if lang == 'fr':
+        analysis = TextBlob(tweet, pos_tagger=PatternTagger(), analyzer=PatternAnalyzer())
+
+        if analysis.sentiment[0] > 0:
+            return 'Positive'
+        elif analysis.sentiment[0] == 0:
+            return 'Neutral'
+        else:
+            return 'Negative'
     else:
-        return 'Negative'
+        analysis = TextBlob(tweet)
+        if analysis.sentiment.polarity > 0:
+            return 'Positive'
+        elif analysis.sentiment.polarity == 0:
+            return 'Neutral'
+        else:
+            return 'Negative'
 
 
 # ============================== Pie graph ================================== #
