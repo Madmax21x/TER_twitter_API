@@ -18,7 +18,7 @@ class TwitterClient():
 
     def stream(self, data, file_name, df):
         i = 0
-        for tweet in Cursor(self.twitter_client.search, q=data, count=100, lang='en', tweet_mode='extended').items():
+        for tweet in Cursor(self.twitter_client.search, q=data, count=70, lang='fr', tweet_mode='extended').items():
             print(i, end='\r')
             if 'extended_tweet' in tweet._json:
                 df.loc[i, 'Tweets'] = tweet._json['full_text']
@@ -71,7 +71,7 @@ if __name__ == "__main__":
                              'user_followers', 'User_location', 'User_verified',
                              'fav_count', 'rt_count', 'tweet_date'])
 
-    __df = twitter_client.stream(data=['boeing'], file_name='my_tweets', df=_df)
+    __df = twitter_client.stream(data=['CaseLawAnalytic'], file_name='my_tweets_predictice', df=_df)
 
     # __df.info()
     # print(__df.head(5))
